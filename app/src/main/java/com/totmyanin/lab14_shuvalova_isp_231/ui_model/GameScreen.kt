@@ -1,13 +1,7 @@
 package com.totmyanin.lab14_shuvalova_isp_231.ui_model
 
-import android.R
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.runtime.Composable
-
-import androidx.compose.ui.Modifier
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,34 +9,33 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.ui.Alignment
-import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
-import androidx.compose.ui.unit.sp
-
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.foundation.text.KeyboardActions
-import java.nio.file.WatchEvent
-import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
-import com.totmyanin.lab14_shuvalova_isp_231.data.MAX_NO_OF_WORDS
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.totmyanin.lab14_shuvalova_isp_231.data.MAX_NO_OF_WORDS
+
 @Composable
 fun GameScreen(modifier: Modifier = Modifier, gameViewModel: GameViewModel = viewModel()) {
     val gameUiState by gameViewModel.uiState.collectAsState()
@@ -55,51 +48,52 @@ fun GameScreen(modifier: Modifier = Modifier, gameViewModel: GameViewModel = vie
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Unscramble Game",
+        Text(
+            "Unscramble Game",
             style = MaterialTheme.typography.titleLarge,
-            fontSize = 32.sp)
+            fontSize = 32.sp
+        )
         GameStatus(
             wordCount = gameUiState.currentWordCount,
             score = gameUiState.score
         )
         GameLayout(
             currentScrambledWord = gameUiState.currentScrambledWord,
-            onUserGuessChanged = {gameViewModel.updateUserGuess(it)},
-            onKeyboardDone = {gameViewModel.checkUserGuess()},
+            onUserGuessChanged = { gameViewModel.updateUserGuess(it) },
+            onKeyboardDone = { gameViewModel.checkUserGuess() },
             isGuessWrong = gameUiState.isGuessedWordWrong,
-            onSubmitClicked = {gameViewModel.checkUserGuess()},
-            onSkipClicked =  {gameViewModel.skipWord()},
+            onSubmitClicked = { gameViewModel.checkUserGuess() },
+            onSkipClicked = { gameViewModel.skipWord() },
             userGuess = gameViewModel.userGuess
         )
         if (gameUiState.isGameOver) {
-            finalScoreDialog(
+            FinalScoreDialog(
                 score = gameUiState.score,
-                onPlayAgain = {gameViewModel.resetGame()}
+                onPlayAgain = { gameViewModel.resetGame() }
             )
         }
     }
-    }
+}
+
 @Composable
-fun finalScoreDialog(
+fun FinalScoreDialog(
     score: Int,
     onPlayAgain: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    AlertDialog(onDismissRequest = {
-
-    },
+    AlertDialog(
+        onDismissRequest = {        },
         title = {
-            Column { Text(text = "YOU WIN") },
-
+            Text(text = "YOU WIN") },
             text = {
                 Column {
+                    Text(text = "Вы набрали:")
                     Text(
                         text = "$score очков",
                         style = MaterialTheme.typography.displaySmall,
                         fontSize = 36.sp
                     )
                 }
-            }
         },
         modifier = modifier,
         dismissButton = {},
@@ -108,23 +102,30 @@ fun finalScoreDialog(
                 Text(text = "play again")
             }
         }
+    )
 }
-
-
 
 
 @Composable
 fun GameStatus(wordCount: Int, score: Int, modifier: Modifier = Modifier) {
-    Card( modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
-        Row(modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Слово $wordCount из $MAX_NO_OF_WORDS",
-                style = MaterialTheme.typography.titleMedium)
-            Text("Счёт: $score",
-                style = MaterialTheme.typography.titleMedium)
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                "Слово $wordCount из $MAX_NO_OF_WORDS",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                "Счёт: $score",
+                style = MaterialTheme.typography.titleMedium
+            )
         }
     }
 }
@@ -142,9 +143,11 @@ fun GameLayout(
     modifier: Modifier = Modifier
 ) {
     var userGuess by remember { mutableStateOf("") }
-    Column(modifier = Modifier.fillMaxWidth(),
+    Column(
+        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally)
+        horizontalAlignment = Alignment.CenterHorizontally
+    )
     {
         Card(
             modifier = Modifier
@@ -156,8 +159,10 @@ fun GameLayout(
         )
         {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(currentScrambledWord, fontSize = 45.sp,
-                    style = MaterialTheme.typography.displayMedium)
+                Text(
+                    currentScrambledWord, fontSize = 45.sp,
+                    style = MaterialTheme.typography.displayMedium
+                )
             }
         }
         Text(
@@ -168,7 +173,8 @@ fun GameLayout(
             value = userGuess,
             onValueChange = {
                 userGuess = it
-                onUserGuessChanged(it)},
+                onUserGuessChanged(it)
+            },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
             label = { Text("Введите слово") },
@@ -178,13 +184,16 @@ fun GameLayout(
         )
         if (isGuessWrong) {
             Text(
-                text =  "Try Again",
+                text = "Try Again",
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium
             )
         }
         Button(onClick = onSubmitClicked, modifier = Modifier.fillMaxWidth()) { Text("Проверить") }
-        OutlinedButton(onClick = onSkipClicked, modifier = Modifier.fillMaxWidth()) { Text("Пропустить") }
+        OutlinedButton(
+            onClick = onSkipClicked,
+            modifier = Modifier.fillMaxWidth()
+        ) { Text("Пропустить") }
     }
 }
 
